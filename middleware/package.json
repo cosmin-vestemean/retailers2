@@ -1,0 +1,69 @@
+{
+  "name": "edi-integration-middleware",
+  "description": "aplicație web multi-tenant (PaaS - deși inițial implementată pentru un singur client, Pet Factory) care servește ca platformă de integrare între diverși provideri EDI (Electronic Data Interchange) și sistemul ERP Soft1 (S1). Aplicația va facilita schimbul bidirecțional de documente electronice (XML) între retaileri (via provideri EDI) și ERP-ul S1. Aplicația va rula pe Heroku.",
+  "version": "0.0.0",
+  "homepage": "",
+  "private": true,
+  "keywords": [
+    "feathers"
+  ],
+  "author": {},
+  "contributors": [],
+  "bugs": {},
+  "engines": {
+    "node": ">= 22.10.0"
+  },
+  "feathers": {
+    "language": "js",
+    "packager": "npm",
+    "database": "other",
+    "framework": "koa",
+    "transports": [
+      "rest",
+      "websockets"
+    ],
+    "schema": "json"
+  },
+  "directories": {
+    "lib": "src",
+    "test": "test"
+  },
+  "main": "lib/index",
+  "type": "module",
+  "scripts": {
+    "start": "node src",
+    "dev": "nodemon src/",
+    "prettier": "npx prettier \"**/*.js\" --write",
+    "mocha": "cross-env NODE_ENV=test mocha test/ --recursive --exit",
+    "test": "npm run mocha",
+    "bundle:client": "npm pack --pack-destination ./public"
+  },
+  "dependencies": {
+    "@feathersjs/adapter-commons": "^5.0.33",
+    "@feathersjs/authentication": "^5.0.33",
+    "@feathersjs/authentication-client": "^5.0.33",
+    "@feathersjs/authentication-local": "^5.0.33",
+    "@feathersjs/authentication-oauth": "^5.0.33",
+    "@feathersjs/configuration": "^5.0.33",
+    "@feathersjs/errors": "^5.0.33",
+    "@feathersjs/feathers": "^5.0.33",
+    "@feathersjs/koa": "^5.0.33",
+    "@feathersjs/memory": "^5.0.33",
+    "@feathersjs/schema": "^5.0.33",
+    "@feathersjs/socketio": "^5.0.33",
+    "@feathersjs/transport-commons": "^5.0.33",
+    "basic-ftp": "^5.0.5",
+    "fast-xml-parser": "^5.2.0",
+    "ssh2-sftp-client": "^12.0.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@feathersjs/cli": "^5.0.33",
+    "@feathersjs/rest-client": "^5.0.33",
+    "axios": "^1.8.4",
+    "cross-env": "^7.0.3",
+    "mocha": "^11.1.0",
+    "nodemon": "^3.1.9",
+    "prettier": "^3.5.3"
+  }
+}
