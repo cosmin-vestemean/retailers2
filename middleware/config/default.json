@@ -31,6 +31,10 @@
     }
   },
   "s1": {
-    "baseUrl": "https://petfactory.oncloud.gr/s1services"
+    "baseUrl": "https://petfactory.oncloud.gr/s1services",
+    "username": "websitepetfactory",
+    "password": "petfactory4321",
+    "appId": 1001,
+    "company": 50
   }
 }

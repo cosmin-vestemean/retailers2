@@ -50,7 +50,7 @@
     "@feathersjs/koa": "^5.0.33",
     "@feathersjs/memory": "^5.0.33",
     "@feathersjs/schema": "^5.0.33",
-    "@feathersjs/socketio": "^5.0.33",
+    "@feathersjs/socketio": "^5.0.34",
     "@feathersjs/transport-commons": "^5.0.33",
     "basic-ftp": "^5.0.5",
     "fast-xml-parser": "^5.2.0",

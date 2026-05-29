@@ -1,41 +1,48 @@
 // For more information about this file see https://dove.feathersjs.com/guides/cli/application.html
-import { feathers } from '@feathersjs/feathers'
-import configuration from '@feathersjs/configuration'
-import { koa, rest, bodyParser, errorHandler, parseAuthentication, cors, serveStatic } from '@feathersjs/koa'
-import socketio from '@feathersjs/socketio'
+import { feathers } from '@feathersjs/feathers';
+import configuration from '@feathersjs/configuration';
+import {
+  koa,
+  rest,
+  bodyParser,
+  errorHandler,
+  parseAuthentication,
+  cors,
+  serveStatic
+} from '@feathersjs/koa';
+//import socketio from '@feathersjs/socketio';
+import { configurationValidator } from './configuration.js';
+import { logError } from './hooks/log-error.js';
+import { services } from './services/index.js';
+import { authentication } from './authentication.js';
 
-import { configurationValidator } from './configuration.js'
-import { logError } from './hooks/log-error.js'
-import { authentication } from './authentication.js'
-import { services } from './services/index.js'
-import { channels } from './channels.js'
+// 1) Creez Feathers + înfăşor în Koa
+const raw = feathers();
+const app = koa(raw);
 
-const app = koa(feathers())
+// 2) Încarc configuraţia (default.json, etc)
+app.configure(configuration(configurationValidator));
 
-// Load our app configuration (see config/ folder)
-// The configurationValidator from './configuration.js' already handles the custom 's1' schema
-app.configure(configuration(configurationValidator))
+// 3) Middlewares Koa/Feathers de bază
+app.use(cors());
+app.use(serveStatic(app.get('public')));
 
-// Set up Koa middleware
-app.use(cors())
-app.use(serveStatic(app.get('public')))
-app.use(errorHandler())
-app.use(parseAuthentication())
-app.use(bodyParser())
+app.use(bodyParser());
 
-// Configure services and transports
-app.configure(rest())
-app.configure(
-  socketio({
-    cors: {
-      origin: app.get('origins')
-    }
-  })
-)
-app.configure(authentication)
+// 1) register the REST transport (this sets context.params.http)
+app.configure(rest());
 
-app.configure(services)
-app.configure(channels)
+// 2) then parse the incoming auth header
+app.use(parseAuthentication());
+
+// 3) finally configure the authentication service
+app.configure(authentication);
+
+app.configure(services);
+// app.configure(channels);
+
+// errorHandler MUST be last
+app.use(errorHandler());
 
 // Register hooks that run on all service methods
 app.hooks({
@@ -52,4 +59,27 @@ app.hooks({
   teardown: []
 })
 
-export { app }
+// 6) Seed-uiesc un user minim la pornire
+app.on('setup', async server => {
+  const users = app.service('users');
+  try {
+    // Dacă nu există deja
+    const { total } = await users.find({ query: { email: 'admin@petfactory.local' } });
+    if (!total) {
+      await users.create({
+        email: 'admin@petfactory.local',
+        password: 'secret123',
+        roles: ['admin']
+      });
+      console.log('> Seed user creat: admin@petfactory.local / secret123');
+    }
+  } catch (err) {
+    if (err.code === 409) {
+      console.log('> Seed user deja există, skip.');
+    } else {
+      console.error('> Eroare la crearea seed-user:', err);
+    }
+  }
+});
+
+export { app };
